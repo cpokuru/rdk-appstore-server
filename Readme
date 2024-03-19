@@ -146,3 +146,7 @@ cpokur625@HQSML-1723260 rdk-appstore-server %
 cpokur625@HQSML-1723260 rdk-appstore-server % curl -X GET "http://69.136.48.33:8999?ociurl=/home/rdkm/ociimages/bundle2.tar&platform=Linux"
 /home/rdkm/bundle2.tar.gz%                                                                                                                        cpokur625@HQSML-1723260 rdk-appstore-server % 
 
+
+
+% curl -X GET "http://69.136.48.33:8999?ociurl=/home/rdkm/ociimages/bundle2.tar&platform=Linux"
+http://xx.xx.xx.:8xxx/home/rdkm/bundle2.tar.gz%                                                                                                   cpokur625@HQSML-1723260 rdk-appstore-server % git pull
