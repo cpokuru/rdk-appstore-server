@@ -1,0 +1,76 @@
+How to compile
+
+//------
+gcc rdk-appstore-server.c -o appstoreserver -lmicrohttd
+//------
+ ls ~/ociimages/
+bundle2.tar  bundle.sh
+//-----
+curl -X GET "http://localhost:8999?ociurl=/home/rdkm/bundle/BundleGen/bundle2/bundle2.tar&platform=Linux"
+File not found try in 30 mins,we will create a 
+
+
+//-----
+./appstoreserver
+Server running on port 8999
+Press enter to stop the server
+Received a GET request
+OCI URL: /home/rdkm/bundle/BundleGen/bundle2/bundle2.tar
+Platform: Linux
+/home/rdkm/bundle2.tar.gz does not exist
+/home/rdkm/bundle/BundleGen/bundle2/bundle2.tar does not exist
+script to create a bundle if not exist
+bundle2
+./
+./blobs/
+./blobs/sha256/
+./blobs/sha256/ab63fe62c3b647fa5cdb65fdfd93b2c7cfc6f448076685f9f8ba550548163a01
+./blobs/sha256/5367ef960685e98204abea72996b63adf6f42ec471f2731f74371dd96fbd2dbe
+./blobs/sha256/8095c8e646d7e036836a9f06879bb2fba6622188c4100f844e49e5052171d641
+./index.json
+./oci-layout
+bundle2
+/home/rdkm/bundle/BundleGen
+blobs     bundlegen     	dac-image-testapp-test   									dist    	LICENSE   	requirements.txt    test
+build     bundlegen.egg-info  dac-image-testapp-test-raspberrypi4-20240205181342.rootfs-oci-latest-arm-linux.oci-image   	docker  	NOTICE   	sample_app_metadata    unit_tests
+bundle1  CONTRIBUTING.md 	dac-image-testapp-test-raspberrypi4-20240205181342.rootfs-oci-latest-arm-linux.oci-image.tar  docs    	oci-layout  setup.py   	 Vagrantfile
+bundle2  COPYING     	dac-image-testapp-test.tar   									index.json  README.md   templates   	 webui
+generate bundle ....
+2024-03-18 23:57:05.240 | SUCCESS  | bundlegen.core.stb_platform:validate_platform_config:89 - Validated platform schema files here ['/home/rdkm/bundle/BundleGen/templates/generic/rpi4_reference_dunfell_libs.json', '/home/rdkm/bundle/BundleGen/templates/generic/rpi4_reference_dunfell.json']
+2024-03-18 23:57:05.307 | SUCCESS  | bundlegen.core.image_downloader:download_image:127 - Downloaded image from oci:bundle2 successfully to /tmp/bundlegen/20240318-235705_cfcbe1a02c4a482ca62d30920b71393e
+2024-03-18 23:57:05.353 | SUCCESS  | bundlegen.core.bundle_processor:validate_app_metadata_config:99 - validateWithSchema success!
+readelf: Warning: Separate debug info file /home/rdkm/bundle2/rootfs/lib/libc-2.31.so found, but CRC does not match - ignoring
+readelf: Warning: Separate debug info file /home/rdkm/bundle2/rootfs/lib/libgcc_s.so.1 found, but CRC does not match - ignoring
+2024-03-18 23:57:05.373 | WARNING  | bundlegen.core.bundle_processor:_check_uid_gid_mappings:687 - No mapping found for UID 0
+2024-03-18 23:57:05.373 | WARNING  | bundlegen.core.bundle_processor:_check_uid_gid_mappings:689 - No mapping found for GID 0
+2024-03-18 23:57:05.374 | SUCCESS  | bundlegen.core.bundle_processor:_process_seccomp:1116 - Platform does not have seccomp set
+2024-03-18 23:57:05.425 | SUCCESS  | bundlegen.cli.main:generate:193 - Successfully generated bundle at /home/rdkm/bundle2.tar.gz
+
+//----------
+
+./appstoreserver
+Server running on port 8999
+Press enter to stop the server
+Received a GET request
+OCI URL: /home/rdkm/bundle/BundleGen/bundle2/bundle2.tar
+Platform: Linux
+/home/rdkm/bundle2.tar.gz exists
+Last slash: /bundle2.tar.gz
+Directory path length: 11
+Directory path: /home/rdkm/
+Responding to GET request with directory path: /home/rdkm/
+
+
+//----
+curl -X GET "http://localhost:8999?ociurl=/home/rdkm/bundle/BundleGen/bundle2/bundle2.tar&platform=Linux"
+/home/rdkm/rdkm@RDKM-COMMON:~/ckp/dacwh/newc$
+//--------
+
+rdkm@RDKM-COMMON:~/bundle/BundleGen$ ls ~/bundle2
+bundle2/    	bundle2.tar.gz  
+rdkm@RDKM-COMMON:~/bundle/BundleGen$ ls ~/bundle2
+config.json  rootfs
+rdkm@RDKM-COMMON:~/bundle/BundleGen$ ls ~/bundle2.tar.gz
+/home/rdkm/bundle2.tar.gz
+rdkm@RDKM-COMMON:~/bundle/BundleGen$
+
