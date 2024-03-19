@@ -2,6 +2,7 @@
 
 #include "file_handling.h"
 
+#define SERVER_ADDRESS "http://xx.xx.xx.:8xxx"
 static const char *data_received = ""; // Variable to store received data
 
 void convert_oci_path(char *ociurl) {
@@ -194,9 +195,13 @@ int answer_to_connection(void *cls, struct MHD_Connection *connection,
     dir_path[dir_path_len] = '\0'; // Null-terminate the string
     size_t file_path_len = strlen(file_path);
     printf("Directory path: %s\n", dir_path);
+    char full_url[512];
+    snprintf(full_url, sizeof(full_url), "%s%s", SERVER_ADDRESS, file_path);
+
 // Create response with the directory path
-    response = MHD_create_response_from_buffer(file_path_len, (void *)file_path, MHD_RESPMEM_MUST_COPY);
-    if (!response) {
+    //response = MHD_create_response_from_buffer(file_path_len, (void *)file_path, MHD_RESPMEM_MUST_COPY);
+   response = MHD_create_response_from_buffer(strlen(full_url), (void *)full_url, MHD_RESPMEM_MUST_COPY); 
+   if (!response) {
         printf("Error: Failed to create response\n");
         free(dir_path);
         return MHD_NO;
