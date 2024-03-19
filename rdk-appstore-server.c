@@ -27,6 +27,38 @@
 #define DATA_FILE "received_data.txt"
  
 static const char *data_received = ""; // Variable to store received data
+void convert_oci_path(char *ociurl) {
+	char directory[256]; // Adjust the size as needed
+	char filename[256];  // Adjust the size as needed
+
+	// Split the OCI path into directory and filename
+	strcpy(directory, ociurl);
+	char *last_slash = strrchr(directory, '/');
+	if (last_slash != NULL) {
+    	*last_slash = '\0'; // Terminate directory string at the last '/'
+    	strcpy(filename, last_slash + 1); // Copy the filename portion
+	} else {
+    	strcpy(filename, ociurl); // If no '/', consider the whole string as filename
+    	directory[0] = '\0'; // Empty directory string
+	}
+
+	// Extract the bundle name from the filename
+	char bundle_name[256]; // Adjust the size as needed
+	strcpy(bundle_name, filename);
+	char *dot_position = strchr(bundle_name, '.');
+	if (dot_position != NULL) {
+    	*dot_position = '\0'; // Remove the file extension
+	}
+
+	// Construct the new path excluding 'ociimages' directory
+	char *bundle_gen_directory = strstr(directory, "ociimages");
+	if (bundle_gen_directory != NULL) {
+    	strcpy(bundle_gen_directory, "bundle/BundleGen"); // Replace 'ociimages' with 'bundle/BundleGen'
+	}
+
+	// Construct the new path
+	sprintf(ociurl, "%s/%s/%s.tar", directory, bundle_name, bundle_name);
+}
  
 void invokeScript(const char *filename) {
 	char scriptCmd[256];
@@ -126,6 +158,8 @@ static int answer_to_connection(void *cls, struct MHD_Connection *connection,
 
     	printf("OCI URL: %s\n", ociurl);
     	printf("Platform: %s\n", platform);
+        convert_oci_path(ociurl);
+    	printf("Converted path: %s\n", ociurl);
 
     	// Check if ociurl parameter exists
     	if (!ociurl) {
