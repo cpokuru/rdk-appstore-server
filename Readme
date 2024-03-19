@@ -78,3 +78,10 @@ rdkm@RDKM-COMMON:~/bundle/BundleGen$
 commit 2 :
 curl -X GET "http://localhost:8999?ociurl=/home/rdkm/ociimages/bundle2.tar&platform=Linux"
 
+
+//--compile using cmake
+mkdir build
+cd build
+cmake ..
+cmake --build .
+
