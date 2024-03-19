@@ -40,7 +40,7 @@ void convert_oci_path(char *ociurl) {
 
 void invokeScript(const char *filename) {
     char scriptCmd[256];
-    snprintf(scriptCmd, sizeof(scriptCmd), "/home/rdkm/ociimages/script.sh %s", filename);
+    snprintf(scriptCmd, sizeof(scriptCmd), "/home/rdkm/ociimages/bundle.sh %s", filename);
     int resp = system(scriptCmd);
     if (resp == -1) {
         printf("Error: Failed to execute script\n");
