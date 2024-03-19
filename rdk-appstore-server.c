@@ -261,10 +261,10 @@ static int answer_to_connection(void *cls, struct MHD_Connection *connection,
 	// Copy the directory path
 	strncpy(dir_path, file_path, dir_path_len);
 	dir_path[dir_path_len] = '\0'; // Null-terminate the string
-
+        size_t file_path_len = strlen(file_path);
 	printf("Directory path: %s\n", dir_path);
 // Create response with the directory path
-	response = MHD_create_response_from_buffer(dir_path_len, (void *)dir_path, MHD_RESPMEM_MUST_COPY);
+	response = MHD_create_response_from_buffer(file_path_len, (void *)file_path, MHD_RESPMEM_MUST_COPY);
 	if (!response) {
     	printf("Error: Failed to create response\n");
     	free(dir_path);
