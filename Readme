@@ -149,4 +149,11 @@ cpokur625@HQSML-1723260 rdk-appstore-server % curl -X GET "http://69.136.48.33:8
 
 
 % curl -X GET "http://69.136.48.33:8999?ociurl=/home/rdkm/ociimages/bundle2.tar&platform=Linux"
-http://xx.xx.xx.:8xxx/home/rdkm/bundle2.tar.gz%                                                                                                   cpokur625@HQSML-1723260 rdk-appstore-server % git pull
+http://xx.xx.xx.:8xxx/home/rdkm/bundle2.tar.gz%  
+cpokur625@HQSML-1723260 rdk-appstore-server % git pull
+
+rdkm@RDKM-COMMON:~/ckp/dacwh/newc/org/build$ curl -X GET "http://69.136.48.33:8999?ociurl=http://10.0.0.1/home/rdkm/ociimages/bundle2.tar&platform=Linux"
+File not found try in 30 mins,we will create a bundle
+rdkm@RDKM-COMMON:~/ckp/dacwh/newc/org/build$ curl -X GET "http://69.136.48.33:8999?ociurl=http://10.0.0.1/home/rdkm/ociimages/bundle2.tar&platform=Linux"
+http://xx.xx.xx.:8xxx/home/rdkm/bundle2.tar.gzrdkm@RDKM-COMMON:~/ckp/dacwh/newc/org/build$
+
