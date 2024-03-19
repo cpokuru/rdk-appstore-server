@@ -1,7 +1,7 @@
 How to compile
 
 //------
-gcc rdk-appstore-server.c -o appstoreserver -lmicrohttd
+gcc rdk-appstore-server.c -o appstoreserver -lmicrohttpd
 //------
  ls ~/ociimages/
 bundle2.tar  bundle.sh
