@@ -164,3 +164,96 @@ rdkm@RDKM-COMMON:~/ckp/dacwh/newc$
 rdkm@RDKM-COMMON:~/ckp/dacwh/newc$ curl -X GET "http://10.0.0.137:8999?ociurl=http://10.0.0.1/home/rdkm/ociimages/bundle2.tar&platform=rpi4_reference_dunfell"
 http://xx.xx.xx.:8xxx/home/rdkm/bundle2.tar.gzrdkm@RDKM-COMMON:~/ckp/dacwh/newc$
 
+id and name commit:
+//—------curl -X GET "http://10.0.0.137:8999?platform=rpi4_reference_dunfell&id=demo.id.bundle2"
+Bundle will be created soonrdkm@RDKM-COMMON:~/bundle/BundleGen$
+rdkm@RDKM-COMMON:~/bundle/BundleGen$
+rdkm@RDKM-COMMON:~/bundle/BundleGen$ curl -X GET "http://10.0.0.137:8999?platform=rpi4_reference_dunfell&id=demo.id.bundle2"
+http://192.168.0.1:8585/home/rdkm/bundle2.tar.gzrdkm@RDKM-COMMON:~/bundle/BundleGen$
+
+
+dkm@RDKM-COMMON:~/ckp/dacwh/newc/chandra/build$ ./rdk-appstore-server
+Server running on port 8999
+Press enter to stop the server
+Received a GET request
+ID: demo.id.bundle2
+Platform: rpi4_reference_dunfell
+  % Total	% Received % Xferd  Average Speed   Time	Time 	Time  Current
+                             	Dload  Upload   Total   Spent	Left  Speed
+100  2272	0  2272	0 	0   335k  	0 --:--:-- --:--:-- --:--:--  369k
+Name of bundle based on id is : bundle2
+Copied value: bundle2
+file path  /home/rdkm/bundle2.tar.gz
+file path bundle /home/rdkm/bundle/BundleGen/bundle2/bundle2.tar
+File not found, invoking script to generate bundle
+script to create a bundle if not exist
+bundle2
+rpi4_reference_dunfell
+filenam
+bundle2
+source
+/home/rdkm/ociimages
+bundle2.tar
+bundle2
+./
+./blobs/
+./blobs/sha256/
+./blobs/sha256/ab63fe62c3b647fa5cdb65fdfd93b2c7cfc6f448076685f9f8ba550548163a01
+./blobs/sha256/5367ef960685e98204abea72996b63adf6f42ec471f2731f74371dd96fbd2dbe
+./blobs/sha256/8095c8e646d7e036836a9f06879bb2fba6622188c4100f844e49e5052171d641
+./index.json
+./oci-layout
+bundle2
+/home/rdkm/bundle/BundleGen
+blobs   		 dac-image-testapp-test-raspberrypi4-20240205181342.rootfs-oci-latest-arm-linux.oci-image  	oci-layout
+build   		 dac-image-testapp-test-raspberrypi4-20240205181342.rootfs-oci-latest-arm-linux.oci-image.tar  README.md
+bundle1   		 dac-image-testapp-test.tar   							   	requirements.txt
+bundle2   		 dac-image-wayland-egl-test   							   	sample_app_metadata
+bundle3   		 dist   										   	setup.py
+bundlegen   	 docker   										   	templates
+bundlegen.egg-info    docs   										   	test
+CONTRIBUTING.md   	 index.json   									   	unit_tests
+COPYING   		 LICENSE   										   	Vagrantfile
+dac-image-testapp-test    NOTICE   										   	webui
+generate bundle ....
+2024-03-22 18:20:49.028 | SUCCESS  | bundlegen.core.stb_platform:validate_platform_config:89 - Validated platform schema files here ['/home/rdkm/bundle/BundleGen/templates/generic/rpi4_reference_dunfell_libs.json', '/home/rdkm/bundle/BundleGen/templates/generic/rpi4_reference_dunfell.json']
+2024-03-22 18:20:49.059 | SUCCESS  | bundlegen.core.image_downloader:download_image:127 - Downloaded image from oci:bundle2 successfully to /tmp/bundlegen/20240322-182049_180995c431f6437d8a7d2ff196b4ae20
+2024-03-22 18:20:49.106 | SUCCESS  | bundlegen.core.bundle_processor:validate_app_metadata_config:99 - validateWithSchema success!
+readelf: Warning: Separate debug info file /home/rdkm/bundle2/rootfs/lib/libc-2.31.so found, but CRC does not match - ignoring
+readelf: Warning: Separate debug info file /home/rdkm/bundle2/rootfs/lib/libgcc_s.so.1 found, but CRC does not match - ignoring
+2024-03-22 18:20:49.128 | WARNING  | bundlegen.core.bundle_processor:_check_uid_gid_mappings:687 - No mapping found for UID 0
+2024-03-22 18:20:49.128 | WARNING  | bundlegen.core.bundle_processor:_check_uid_gid_mappings:689 - No mapping found for GID 0
+2024-03-22 18:20:49.129 | SUCCESS  | bundlegen.core.bundle_processor:_process_seccomp:1116 - Platform does not have seccomp set
+2024-03-22 18:20:49.179 | SUCCESS  | bundlegen.cli.main:generate:193 - Successfully generated bundle at /home/rdkm/bundle2.tar.gz
+Script executed successfully
+Received a GET request
+ID: demo.id.bundle2
+Platform: rpi4_reference_dunfell
+  % Total	% Received % Xferd  Average Speed   Time	Time 	Time  Current
+                             	Dload  Upload   Total   Spent	Left  Speed
+100  2272	0  2272	0 	0   243k  	0 --:--:-- --:--:-- --:--:--  246k
+Name of bundle based on id is : bundle2
+Copied value: bundle2
+file path  /home/rdkm/bundle2.tar.gz
+File /home/rdkm/bundle2.tar.gz exists
+Resp is http://192.168.0.1:8585/home/rdkm/bundle2.tar.gz
+
+rdkm@RDKM-COMMON:~/ckp/dacwh/newc/chandra/build$ cat ../../output1.json
+{
+  "icon": "http://pretty.url/icon3.png",
+  "name": "bundle2",
+  "description": "Description of Fancy application 6",
+  "type": "fancy_applications",
+  "size": 10000000,
+  "category": "application",
+  "localization": [
+	{
+  	"languageCode": "en",
+  	"name": "Fancy application",
+  	"description": "description"
+	}
+  ],
+  "id": "demo.id.bundle2",
+  "version": "2.244447"
+}
+
