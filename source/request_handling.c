@@ -39,9 +39,9 @@ void convert_oci_path(char *ociurl) {
 
 }
 
-void invokeScript(const char *filename) {
+void invokeScript(const char *filename,const char *platform_value) {
     char scriptCmd[256];
-    snprintf(scriptCmd, sizeof(scriptCmd), "/home/rdkm/ociimages/bundle.sh %s", filename);
+    snprintf(scriptCmd, sizeof(scriptCmd), "/home/rdkm/ociimages/bundle.sh %s %s", filename,platform_value);
     int resp = system(scriptCmd);
     if (resp == -1) {
         printf("Error: Failed to execute script\n");
@@ -90,6 +90,7 @@ int answer_to_connection(void *cls, struct MHD_Connection *connection,
 
         printf("OCI URL: %s\n", ociurl);
         printf("Platform: %s\n", platform);
+        const char *platform_value=strdup(platform);
         convert_oci_path(ociurl);
         printf("Converted path: %s\n", ociurl);
 
@@ -325,7 +326,7 @@ int answer_to_connection(void *cls, struct MHD_Connection *connection,
     } else {
         printf("%s does not exist\n", ociurl);
         // Invoke the script and pass the filename as an argument
-        invokeScript(filename); 
+        invokeScript(filename,platform_value); 
    }    
 #if 0
             int resp = system("/home/rdkm/ociimages/script.sh");

@@ -157,3 +157,10 @@ File not found try in 30 mins,we will create a bundle
 rdkm@RDKM-COMMON:~/ckp/dacwh/newc/org/build$ curl -X GET "http://69.136.48.33:8999?ociurl=http://10.0.0.1/home/rdkm/ociimages/bundle2.tar&platform=Linux"
 http://xx.xx.xx.:8xxx/home/rdkm/bundle2.tar.gzrdkm@RDKM-COMMON:~/ckp/dacwh/newc/org/build$
 
+
+ curl -X GET "http://10.0.0.137:8999?ociurl=http://10.0.0.1/home/rdkm/ociimages/bundle2.tar&platform=rpi4_reference_dunfell"
+File not found try in 30 mins,we will create a bundlerdkm@RDKM-COMMON:~/ckp/dacwh/newc$
+rdkm@RDKM-COMMON:~/ckp/dacwh/newc$
+rdkm@RDKM-COMMON:~/ckp/dacwh/newc$ curl -X GET "http://10.0.0.137:8999?ociurl=http://10.0.0.1/home/rdkm/ociimages/bundle2.tar&platform=rpi4_reference_dunfell"
+http://xx.xx.xx.:8xxx/home/rdkm/bundle2.tar.gzrdkm@RDKM-COMMON:~/ckp/dacwh/newc$
+
