@@ -1,8 +1,11 @@
-#include "server.h"
-#include "file_handling.h"
+#include "appstoreserver.h"
+#include "microhttpd_wrapper.h"
 
-char *read_data_from_file() {
-        FILE *file = fopen(DATA_FILE, "r"); 
+
+
+// Function to read data from file 
+char *read_data_from_file() { 
+	FILE *file = fopen(DATA_FILE, "r"); 
 	if (!file) { 
     	return NULL; // File does not exist 
 	} 
@@ -32,11 +35,11 @@ char *read_data_from_file() {
  
 	fclose(file); 
 	return data; 
-
-}
-
-int write_data_to_file(const char *data, size_t data_size) {
-        FILE *file = fopen(DATA_FILE, "w"); 
+} 
+ 
+// Function to write data to file 
+int write_data_to_file(const char *data,size_t data_size) { 
+	FILE *file = fopen(DATA_FILE, "w"); 
 	if (!file) { 
     	return 0; // Error opening file 
 	} 
@@ -46,6 +49,17 @@ int write_data_to_file(const char *data, size_t data_size) {
 	fclose(file); 
  
 	return bytes_written == data_size; // Return success if all data was written 
+}
 
+void invokeScript(const char *filename, const char *platform_value) {
+    char scriptCmd[256];
+    snprintf(scriptCmd, sizeof(scriptCmd), "/home/rdkm/ociimages/bundle.sh %s %s", filename,platform_value);
+    int resp = system(scriptCmd);
+    if (resp == -1) {
+        printf("Error: Failed to execute script\n");
+    } else {
+        printf("Script executed successfully\n");
+        // Handle further logic after script execution if needed
+    }
 }
 
