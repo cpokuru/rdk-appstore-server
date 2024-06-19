@@ -24,6 +24,21 @@ include_directories(include)
 add_executable(rdk-appstore-server ${SOURCE_FILES} ${HEADER_FILES})
 
 # Link against the Microhttpd library
-target_link_libraries(rdk-appstore-server microhttpd)
-target_link_libraries(rdk-appstore-server jansson)
+#target_link_libraries(rdk-appstore-server microhttpd)
+#target_link_libraries(rdk-appstore-server jansson)
 
+# Link with CURL library
+target_link_libraries(rdk-appstore-server ${CURL_LIBRARIES})
+
+# Add cJSON library (assuming you have cJSON installed)
+find_package(cJSON REQUIRED)
+
+# Include cJSON directory
+include_directories(${CJSON_INCLUDE_DIRS})
+
+
+# Link with cJSON library
+target_link_libraries(rdk-appstore-server ${CJSON_LIBRARIES})
+target_link_libraries(rdk-appstore-server microhttpd)
+target_link_libraries(rdk-appstore-server curl)
+target_link_libraries(rdk-appstore-server jansson)

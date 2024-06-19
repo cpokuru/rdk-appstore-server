@@ -5,10 +5,120 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <curl/curl.h>
+#include <cjson/cJSON.h>
 
 #define PORT 8999
 
+
+// Buffer to store the response
+struct MemoryStruct {
+    char *memory;
+    size_t size;
+};
+
 static const char *data_received = ""; // Variable to store received data 
+
+// Callback function to write the response into the buffer
+static size_t WriteMemoryCallback(void *contents, size_t size, size_t nmemb, void *userp) {
+    size_t realsize = size * nmemb;
+    struct MemoryStruct *mem = (struct MemoryStruct *)userp;
+
+    char *ptr = realloc(mem->memory, mem->size + realsize + 1);
+    if(ptr == NULL) {
+        printf("Not enough memory (realloc returned NULL)\n");
+        return 0;
+    }
+
+    mem->memory = ptr;
+    memcpy(&(mem->memory[mem->size]), contents, realsize);
+    mem->size += realsize;
+    mem->memory[mem->size] = 0;
+
+    return realsize;
+}
+// Function to fetch the app name from the given app ID
+char* fetch_app_name(const char *app_id) {
+    char url[256];
+    snprintf(url, sizeof(url), "http://127.0.0.1:5000/maintainers/rdk/apps/%s", app_id);
+
+    CURL *curl_handle;
+    CURLcode res;
+
+    struct MemoryStruct chunk;
+
+    chunk.memory = malloc(1);  // Will be grown as needed by the realloc above
+    chunk.size = 0;    // No data at this point
+
+    curl_global_init(CURL_GLOBAL_ALL);
+
+    // Initialize a CURL session
+    curl_handle = curl_easy_init();
+
+    if(!curl_handle) {
+        fprintf(stderr, "Failed to initialize CURL\n");
+        free(chunk.memory);
+        curl_global_cleanup();
+        return NULL;
+    }
+
+    // Set the URL
+    curl_easy_setopt(curl_handle, CURLOPT_URL, url);
+
+    // Send all data to this function
+    curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, WriteMemoryCallback);
+
+    // Pass the chunk struct to the callback function
+    curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)&chunk);
+
+    // Perform the request, res will get the return code
+    res = curl_easy_perform(curl_handle);
+
+    // Check for errors
+    if(res != CURLE_OK) {
+        fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+        curl_easy_cleanup(curl_handle);
+        free(chunk.memory);
+        curl_global_cleanup();
+        return NULL;
+    }
+
+    // Parse the JSON response
+    cJSON *json = cJSON_Parse(chunk.memory);
+    char *name = NULL;
+
+    if(json == NULL) {
+        const char *error_ptr = cJSON_GetErrorPtr();
+        if (error_ptr != NULL) {
+            fprintf(stderr, "Error before: %s\n", error_ptr);
+        }
+    } else {
+        // Navigate to the "name" field
+        cJSON *header = cJSON_GetObjectItem(json, "header");
+        if (header != NULL) {
+            cJSON *name_item = cJSON_GetObjectItem(header, "name");
+            if (cJSON_IsString(name_item) && (name_item->valuestring != NULL)) {
+                name = strdup(name_item->valuestring); // Duplicate the name string to return
+            } else {
+                fprintf(stderr, "No valid 'name' field found.\n");
+            }
+        } else {
+            fprintf(stderr, "No 'header' field found.\n");
+        }
+        // Clean up JSON object
+        cJSON_Delete(json);
+    }
+
+    // Clean up CURL and memory
+    curl_easy_cleanup(curl_handle);
+    free(chunk.memory);
+
+    // Clean up CURL globally
+    curl_global_cleanup();
+
+    return name;
+}
+
 
 static int answer_to_connection(void *cls, struct MHD_Connection *connection,
                                 const char *url, const char *method,
@@ -48,38 +158,8 @@ static int answer_to_connection(void *cls, struct MHD_Connection *connection,
         printf("ID: %s\n", id);
         printf("Platform: %s\n", platform);
         const char *platform_value = strdup(platform);
-
-        const char *outputFileName = OUTPUT_FILE;
-        processCurlCommand(id, outputFileName);
-        json_t *root = readJsonFromFile(outputFileName);
-        if (!root) {
-            printf("Failed to read JSON from file\n");
-            return MHD_NO;
-        }
-
-        json_t *name = json_object_get(root, "name");
-        if (!json_is_string(name)) {
-            printf("Failed to extract name from JSON\n");
-            json_decref(root);
-            return MHD_NO;
-        }
-
-        printf("Name of bundle based on id is : %s\n", json_string_value(name));
-        const char *name_value = json_string_value(name);
-        char *idname = NULL;
-
-        if (name_value != NULL) {
-            idname = strdup(name_value);
-            if (idname == NULL) {
-                printf("Error: Memory allocation failed\n");
-            } else {
-                printf("Copied value: %s\n", idname);
-            }
-        } else {
-            printf("Error: Null value in name\n");
-        }
-        json_decref(root);
-
+	char *app_name = fetch_app_name(id);
+        printf("app_name is %s\n",app_name);
         if (!id || strlen(id) == 0) {
             printf("Error: id parameter is missing\n");
 
@@ -96,8 +176,8 @@ static int answer_to_connection(void *cls, struct MHD_Connection *connection,
 
         char file_path[256];
         char file_path_bundle[256];
-        snprintf(file_path, sizeof(file_path), "/home/rdkm/%s.tar.gz", idname);
-        snprintf(file_path_bundle, sizeof(file_path_bundle), "/home/rdkm/bundle/BundleGen/bundle2/%s.tar", idname);
+        snprintf(file_path, sizeof(file_path), "/home/rdkm/%s.tar.gz", app_name);
+        snprintf(file_path_bundle, sizeof(file_path_bundle), "/home/rdkm/BundleGen/%s/%s.tar", app_name,app_name);
 
         printf("file path  %s\n",file_path);
         if (access(file_path, F_OK) != -1) {
@@ -120,7 +200,7 @@ static int answer_to_connection(void *cls, struct MHD_Connection *connection,
         if (access(file_path_bundle, F_OK) != -1) {
             printf("File %s exists\n", file_path_bundle);
 
-            const char *success_message = "/home/rdkm/bundle/BundleGen/bundle2/";
+            const char *success_message = "File path exists ckp";
             response = MHD_create_response_from_buffer(strlen(success_message), (void *)success_message,
                                                         MHD_RESPMEM_PERSISTENT);
             if (!response)
@@ -132,7 +212,7 @@ static int answer_to_connection(void *cls, struct MHD_Connection *connection,
         }
         else{
             printf("File not found, invoking script to generate bundle\n");
-            invokeScript(idname, platform_value);
+            invokeScript(app_name, platform_value);
         }
 
         const char *pending_message = "Bundle will be created soon";

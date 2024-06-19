@@ -9,7 +9,7 @@
 
 int main() {
     char *host_ip;
-    char *interface_name = "wlo1"; // Specify the interface name here
+    char *interface_name = "eno1"; // Specify the interface name here
 
     // Get IP address of the specified interface
     host_ip = get_interface_ip(interface_name);

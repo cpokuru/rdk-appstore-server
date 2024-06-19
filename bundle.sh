@@ -13,7 +13,7 @@ ociurl="$1"
 platformname="$2"
 # Define paths
 source_dir="/home/rdkm/ociimages"
-target_dir="/home/rdkm/bundle/BundleGen"
+target_dir="/home/rdkm/BundleGen"
 
 # Extract the file name from ociurl
 filename=$(basename "$ociurl")

@@ -46,7 +46,9 @@ void processCurlCommand(const char *appId, const char *outputFileName) {
 
     // Construct the command with the provided application ID
     char command[MAX_BUFFER_SIZE];
-    snprintf(command, sizeof(command), "curl --location --request GET 'http://localhost:8082/asms/apps?id=%s&maintainerName=Liberty%%20Global1' --header 'Content-Type: application/json' --header 'Authorization: Basic c3RiOnN0Yg==' --data-raw '' | jq '.applications[] | select(.id == \"%s\")'", appId, appId);
+    //ckpX snprintf(command, sizeof(command), "curl --location --request GET 'http://localhost:8082/asms/apps?id=%s&maintainerName=Liberty%%20Global1' --header 'Content-Type: application/json' --header 'Authorization: Basic c3RiOnN0Yg==' --data-raw '' | jq '.applications[] | select(.id == \"%s\")'", appId, appId);
+    snprintf(command, sizeof(command), "curl -X GET http://127.0.0.1:5000/maintainers/rdk/apps/%s", appId);
+
 
     // Open pipe to execute command
     fp = popen(command, "r");
