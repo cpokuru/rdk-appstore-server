@@ -68,6 +68,8 @@ if [ -f "$source_dir/$filename_ext" ]; then
    # else
     #    echo "Error: Failed to execute bundlegen command"
     #fi
+    echo "Bundle creation Done !!"
+    rm -rf /home/rdkm/$b_name
 else
     echo "Error: File $filename not found in $source_dir"
 fi
