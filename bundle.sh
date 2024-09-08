@@ -12,8 +12,8 @@ fi
 ociurl="$1"
 platformname="$2"
 # Define paths
-source_dir="/home/rdkm/ociimages"
-target_dir="/home/rdkm/BundleGen"
+source_dir="/home/ubuntu/dac/ociimages"
+target_dir="/home/ubuntu/dac/BundleGen"
 
 # Extract the file name from ociurl
 filename=$(basename "$ociurl")
@@ -62,14 +62,15 @@ if [ -f "$source_dir/$filename_ext" ]; then
     echo "generate bundle ...."
     export PYTHONPATH=/usr/lib/python3.8/site:$PYTHONPATH
     #bundlegen generate --platform rpi4_reference_dunfell oci:$b_name /home/rdkm/$b_name
-    bundlegen generate --platform $platformname oci:$b_name /home/rdkm/$b_name
+    bundlegen generate --platform $platformname oci:$b_name /home/ubuntu/dac/bundles/$b_name
    # if [ $? -eq 0 ]; then
     #    echo "Script executed successfully"
    # else
     #    echo "Error: Failed to execute bundlegen command"
     #fi
     echo "Bundle creation Done !!"
-    rm -rf /home/rdkm/$b_name
+    sudo cp -r /home/ubuntu/dac/bundles/$b_name.tar.gz /var/www/html/files
+    #rm -rf /home/ubuntu/bundles/$b_name
 else
     echo "Error: File $filename not found in $source_dir"
 fi

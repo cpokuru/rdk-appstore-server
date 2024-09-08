@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "microhttpd_wrapper.h"
 
-#define SERVER_ADDRESS "http://192.168.0.1:8585"
+#define SERVER_ADDRESS "http://192.168.64.30/files"
 #define PORT 8999 
 #define DATA_FILE "received_data.txt" 
 #define OUTPUT_FILE "/home/rdkm/ckp/dacwh/newc/output1.json"
@@ -9,7 +9,7 @@
 
 int main() {
     char *host_ip;
-    char *interface_name = "eno1"; // Specify the interface name here
+    char *interface_name = "ens3"; // Specify the interface name here
 
     // Get IP address of the specified interface
     host_ip = get_interface_ip(interface_name);

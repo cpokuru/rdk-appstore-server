@@ -41,7 +41,7 @@ static size_t WriteMemoryCallback(void *contents, size_t size, size_t nmemb, voi
 char* fetch_app_name(const char *app_id) {
     char url[256];
     snprintf(url, sizeof(url), "http://127.0.0.1:5000/maintainers/rdk/apps/%s", app_id);
-
+    printf("meta data url is %s\n",url);
     CURL *curl_handle;
     CURLcode res;
 
@@ -82,7 +82,7 @@ char* fetch_app_name(const char *app_id) {
         curl_global_cleanup();
         return NULL;
     }
-
+    printf("Received response: %s\n", chunk.memory);
     // Parse the JSON response
     cJSON *json = cJSON_Parse(chunk.memory);
     char *name = NULL;
@@ -93,17 +93,24 @@ char* fetch_app_name(const char *app_id) {
             fprintf(stderr, "Error before: %s\n", error_ptr);
         }
     } else {
-        // Navigate to the "name" field
-        cJSON *header = cJSON_GetObjectItem(json, "header");
-        if (header != NULL) {
-            cJSON *name_item = cJSON_GetObjectItem(header, "name");
-            if (cJSON_IsString(name_item) && (name_item->valuestring != NULL)) {
-                name = strdup(name_item->valuestring); // Duplicate the name string to return
+           // Get the 'applications' array
+        cJSON *applications = cJSON_GetObjectItem(json, "applications");
+        if (cJSON_IsArray(applications)) {
+            // Get the first item in the array
+            cJSON *app = cJSON_GetArrayItem(applications, 0);
+            if (app != NULL) {
+                // Get the 'name' field from the first application object
+                cJSON *name_item = cJSON_GetObjectItem(app, "name");
+                if (cJSON_IsString(name_item) && (name_item->valuestring != NULL)) {
+                    name = strdup(name_item->valuestring);  // Duplicate the name string to return
+                } else {
+                    fprintf(stderr, "No valid 'name' field found.\n");
+                }
             } else {
-                fprintf(stderr, "No valid 'name' field found.\n");
+                fprintf(stderr, "No application object found in 'applications'.\n");
             }
         } else {
-            fprintf(stderr, "No 'header' field found.\n");
+            fprintf(stderr, "'applications' field is not an array.\n");
         }
         // Clean up JSON object
         cJSON_Delete(json);
@@ -119,7 +126,17 @@ char* fetch_app_name(const char *app_id) {
     return name;
 }
 
-
+void get_bundlename(const char *file_path, char *file_name) {
+    // Find the last occurrence of '/'
+    const char *last_slash = strrchr(file_path, '/');
+    if (last_slash != NULL) {
+        // The filename is after the last '/'
+        strcpy(file_name, last_slash + 1);
+    } else {
+        // If no '/' is found, assume the input itself is the filename
+        strcpy(file_name, file_path);
+    }
+}
 static int answer_to_connection(void *cls, struct MHD_Connection *connection,
                                 const char *url, const char *method,
                                 const char *version, const char *upload_data,
@@ -175,15 +192,20 @@ static int answer_to_connection(void *cls, struct MHD_Connection *connection,
         }
 
         char file_path[256];
-        char file_path_bundle[256];
-        snprintf(file_path, sizeof(file_path), "/home/rdkm/%s.tar.gz", app_name);
-        snprintf(file_path_bundle, sizeof(file_path_bundle), "/home/rdkm/BundleGen/%s/%s.tar", app_name,app_name);
+        char file_name[256];
+	char file_path_bundle[256];
+        //snprintf(file_path, sizeof(file_path), "/home/ubuntu/dac/bundles/%s.tar.gz", app_name);
+        //Use apache server path
+	snprintf(file_path, sizeof(file_path), "/var/www/html/files/%s.tar.gz", app_name);
+        snprintf(file_path_bundle, sizeof(file_path_bundle), "/home/ubuntu/dac/BundleGen/%s/%s.tar", app_name,app_name);
+        get_bundlename(file_path, file_name);
 
-        printf("file path  %s\n",file_path);
-        if (access(file_path, F_OK) != -1) {
+        printf("file path  %s and filename is  %s\n",file_path,file_name);
+        
+	if (access(file_path, F_OK) != -1) {
             printf("File %s exists\n", file_path);
             char full_url[512];
-            snprintf(full_url,sizeof(full_url),"%s%s",SERVER_ADDRESS,file_path);
+            snprintf(full_url,sizeof(full_url),"%s%s",SERVER_ADDRESS,file_name);
             printf("Resp is %s\n",full_url);
 
             response = MHD_create_response_from_buffer(strlen(full_url), (void *)full_url,

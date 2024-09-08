@@ -53,7 +53,7 @@ int write_data_to_file(const char *data,size_t data_size) {
 
 void invokeScript(const char *filename, const char *platform_value) {
     char scriptCmd[256];
-    snprintf(scriptCmd, sizeof(scriptCmd), "/home/rdkm/ociimages/bundle.sh %s %s", filename,platform_value);
+    snprintf(scriptCmd, sizeof(scriptCmd), "/home/ubuntu/dac/rdk-appstore-server/bundle.sh %s %s", filename,platform_value);
     int resp = system(scriptCmd);
     if (resp == -1) {
         printf("Error: Failed to execute script\n");

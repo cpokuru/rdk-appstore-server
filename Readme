@@ -86,3 +86,9 @@ app_name is RDK2
 file path  /home/rdkm/RDK2.tar.gz
 File /home/rdkm/RDK2.tar.gz exists
 Resp is http://192.168.0.1:8585/home/rdkm/RDK2.tar.gz
+#
+apt install python3.10-venv
+sudo apt install libcjson-dev
+sudo apt install libmicrohttpd-dev
+sudo apt install libjansson-dev
+sudo apt install libcurl4-openssl-dev
