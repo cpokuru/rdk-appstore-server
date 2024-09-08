@@ -87,31 +87,52 @@ char* fetch_app_name(const char *app_id) {
     cJSON *json = cJSON_Parse(chunk.memory);
     char *name = NULL;
 
-    if(json == NULL) {
+    if(json == NULL)
+    {
         const char *error_ptr = cJSON_GetErrorPtr();
-        if (error_ptr != NULL) {
+        if (error_ptr != NULL)
+       	{
             fprintf(stderr, "Error before: %s\n", error_ptr);
         }
-    } else {
-           // Get the 'applications' array
-        cJSON *applications = cJSON_GetObjectItem(json, "applications");
-        if (cJSON_IsArray(applications)) {
-            // Get the first item in the array
-            cJSON *app = cJSON_GetArrayItem(applications, 0);
-            if (app != NULL) {
-                // Get the 'name' field from the first application object
-                cJSON *name_item = cJSON_GetObjectItem(app, "name");
-                if (cJSON_IsString(name_item) && (name_item->valuestring != NULL)) {
-                    name = strdup(name_item->valuestring);  // Duplicate the name string to return
-                } else {
-                    fprintf(stderr, "No valid 'name' field found.\n");
-                }
-            } else {
-                fprintf(stderr, "No application object found in 'applications'.\n");
-            }
-        } else {
-            fprintf(stderr, "'applications' field is not an array.\n");
+    } 
+    else
+    {
+	// Check for error field in the response
+        cJSON *error = cJSON_GetObjectItem(json, "error");
+        if (cJSON_IsString(error) && (error->valuestring != NULL)) 
+	{
+            fprintf(stderr, "Error from server: %s\n", error->valuestring);
         }
+       	else
+       	{
+              // Get the 'applications' array
+              cJSON *applications = cJSON_GetObjectItem(json, "applications");
+              if (cJSON_IsArray(applications)) 
+	      {
+                  // Get the first item in the array
+                  cJSON *app = cJSON_GetArrayItem(applications, 0);
+                  if (app != NULL) 
+		  {
+                    // Get the 'name' field from the first application object
+                     cJSON *name_item = cJSON_GetObjectItem(app, "name");
+                      if (cJSON_IsString(name_item) && (name_item->valuestring != NULL))
+		      {
+                            name = strdup(name_item->valuestring);  // Duplicate the name string to return
+                      } else
+		      {
+                         fprintf(stderr, "No valid 'name' field found.\n");
+                      }
+                   }
+		   else
+		   {
+                     fprintf(stderr, "No application object found in 'applications'.\n");
+                   }
+                 } 
+	         else
+		 {
+                     fprintf(stderr, "'applications' field is not an array.\n");
+                 }
+	}
         // Clean up JSON object
         cJSON_Delete(json);
     }
@@ -177,10 +198,10 @@ static int answer_to_connection(void *cls, struct MHD_Connection *connection,
         const char *platform_value = strdup(platform);
 	char *app_name = fetch_app_name(id);
         printf("app_name is %s\n",app_name);
-        if (!id || strlen(id) == 0) {
-            printf("Error: id parameter is missing\n");
+        if (!app_name || strlen(app_name) == 0) {
+            printf("Error: app not found \n");
 
-            const char *error_message = "id parameter is missing";
+            const char *error_message = "app not found";
             response = MHD_create_response_from_buffer(strlen(error_message), (void *)error_message,
                                                         MHD_RESPMEM_PERSISTENT);
             if (!response)
