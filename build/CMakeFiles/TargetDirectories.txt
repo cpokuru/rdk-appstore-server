@@ -1,0 +1,3 @@
+/home/ubuntu/dac/rdk-appstore-server/build/CMakeFiles/rdk-appstore-server.dir
+/home/ubuntu/dac/rdk-appstore-server/build/CMakeFiles/edit_cache.dir
+/home/ubuntu/dac/rdk-appstore-server/build/CMakeFiles/rebuild_cache.dir

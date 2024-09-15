@@ -40,7 +40,7 @@ static size_t WriteMemoryCallback(void *contents, size_t size, size_t nmemb, voi
 // Function to fetch the app name from the given app ID
 char* fetch_app_name(const char *app_id) {
     char url[256];
-    snprintf(url, sizeof(url), "http://127.0.0.1:5000/maintainers/rdk/apps/%s", app_id);
+    snprintf(url, sizeof(url), "http://192.168.64.30:8089/maintainers/rdk/apps/%s", app_id);
     printf("meta data url is %s\n",url);
     CURL *curl_handle;
     CURLcode res;
