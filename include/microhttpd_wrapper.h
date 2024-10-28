@@ -4,7 +4,7 @@
 #include <microhttpd.h>
 
 
-#define SERVER_ADDRESS "http://192.168.64.30/files/"
+#define SERVER_ADDRESS "http://192.168.64.47/files/"
 #define PORT 8999 
 #define DATA_FILE "received_data.txt" 
 #define OUTPUT_FILE "/home/rdkm/ckp/dacwh/newc/output1.json"

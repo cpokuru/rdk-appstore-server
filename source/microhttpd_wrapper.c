@@ -7,7 +7,7 @@
 #include <string.h>
 #include <curl/curl.h>
 #include <cjson/cJSON.h>
-
+#define SCRIPT_PATH "/home/ubuntu/dac/rdk-appstore-server/getMtr.sh"
 #define PORT 8999
 
 
@@ -39,22 +39,40 @@ static size_t WriteMemoryCallback(void *contents, size_t size, size_t nmemb, voi
 }
 // Function to fetch the app name from the given app ID
 char* fetch_app_name(const char *app_id) {
+    char command[256];
+    char output[128]; 
     char url[256];
-    snprintf(url, sizeof(url), "http://192.168.64.30:8089/maintainers/rdk/apps/%s", app_id);
-    printf("meta data url is %s\n",url);
+    snprintf(command, sizeof(command), "%s %s", SCRIPT_PATH, app_id);
+    
+    // Open the command for reading
+    FILE *fp = popen(command, "r");
+    if (fp == NULL) {
+        perror("Failed to run command");
+        return NULL;
+    }
+
+    // Read the output of the script
+    if (fgets(output, sizeof(output), fp) != NULL) {
+        // Remove newline character from the output
+        output[strcspn(output, "\n")] = 0;
+    }
+    pclose(fp);
+
+    printf("maintainer is %s and app_id is %s\n", output, app_id);
+    snprintf(url, sizeof(url), "http://192.168.64.47:8089/maintainers/%s/apps/%s", output, app_id);
+    printf("meta data url is %s\n", url);
+
     CURL *curl_handle;
     CURLcode res;
-
     struct MemoryStruct chunk;
 
-    chunk.memory = malloc(1);  // Will be grown as needed by the realloc above
-    chunk.size = 0;    // No data at this point
+    chunk.memory = malloc(1);  // Will be grown as needed by realloc
+    chunk.size = 0;            // No data at this point
 
     curl_global_init(CURL_GLOBAL_ALL);
 
     // Initialize a CURL session
     curl_handle = curl_easy_init();
-
     if(!curl_handle) {
         fprintf(stderr, "Failed to initialize CURL\n");
         free(chunk.memory);
@@ -83,56 +101,30 @@ char* fetch_app_name(const char *app_id) {
         return NULL;
     }
     printf("Received response: %s\n", chunk.memory);
+
     // Parse the JSON response
     cJSON *json = cJSON_Parse(chunk.memory);
     char *name = NULL;
 
-    if(json == NULL)
-    {
+    if(json == NULL) {
         const char *error_ptr = cJSON_GetErrorPtr();
-        if (error_ptr != NULL)
-       	{
+        if (error_ptr != NULL) {
             fprintf(stderr, "Error before: %s\n", error_ptr);
         }
-    } 
-    else
-    {
-	// Check for error field in the response
-        cJSON *error = cJSON_GetObjectItem(json, "error");
-        if (cJSON_IsString(error) && (error->valuestring != NULL)) 
-	{
-            fprintf(stderr, "Error from server: %s\n", error->valuestring);
+    } else {
+        // Get the 'header' object
+        cJSON *header = cJSON_GetObjectItem(json, "header");
+        if (cJSON_IsObject(header)) {
+            // Get the 'name' field in 'header'
+            cJSON *name_item = cJSON_GetObjectItem(header, "name");
+            if (cJSON_IsString(name_item) && (name_item->valuestring != NULL)) {
+                name = strdup(name_item->valuestring);  // Duplicate the name string to return
+            } else {
+                fprintf(stderr, "No valid 'name' field found.\n");
+            }
+        } else {
+            fprintf(stderr, "'header' field is not an object.\n");
         }
-       	else
-       	{
-              // Get the 'applications' array
-              cJSON *applications = cJSON_GetObjectItem(json, "applications");
-              if (cJSON_IsArray(applications)) 
-	      {
-                  // Get the first item in the array
-                  cJSON *app = cJSON_GetArrayItem(applications, 0);
-                  if (app != NULL) 
-		  {
-                    // Get the 'name' field from the first application object
-                     cJSON *name_item = cJSON_GetObjectItem(app, "name");
-                      if (cJSON_IsString(name_item) && (name_item->valuestring != NULL))
-		      {
-                            name = strdup(name_item->valuestring);  // Duplicate the name string to return
-                      } else
-		      {
-                         fprintf(stderr, "No valid 'name' field found.\n");
-                      }
-                   }
-		   else
-		   {
-                     fprintf(stderr, "No application object found in 'applications'.\n");
-                   }
-                 } 
-	         else
-		 {
-                     fprintf(stderr, "'applications' field is not an array.\n");
-                 }
-	}
         // Clean up JSON object
         cJSON_Delete(json);
     }
@@ -146,7 +138,6 @@ char* fetch_app_name(const char *app_id) {
 
     return name;
 }
-
 void get_bundlename(const char *file_path, char *file_name) {
     // Find the last occurrence of '/'
     const char *last_slash = strrchr(file_path, '/');
