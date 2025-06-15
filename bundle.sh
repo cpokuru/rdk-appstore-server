@@ -70,6 +70,8 @@ if [ -f "$source_dir/$filename_ext" ]; then
     #fi
     echo "Bundle creation Done !!"
     sudo cp -r /home/ubuntu/dac/bundles/$b_name.tar.gz /var/www/html/files
+    #bucket name: rdkbapps
+    mc cp /home/ubuntu/dac/bundles/$b_name.tar.gz local/rdkbapps/
     #rm -rf /home/ubuntu/bundles/$b_name
 else
     echo "Error: File $filename not found in $source_dir"
